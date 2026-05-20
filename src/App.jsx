@@ -1,406 +1,540 @@
 import { useState, useEffect, useRef } from "react";
-import profileImg from "./assets/profile.jpg";
 
-// ── Theme ──────────────────────────────────────────────────────────────────────
-const T = {
-  bg: "#0a0a0a",
-  bg2: "#111111",
-  bg3: "#161616",
-  accent: "#2EE8A5",
-  white: "#FFFFFF",
-  gray1: "#AAAAAA",
-  gray2: "#666666",
-  border: "rgba(255,255,255,0.08)",
+// ── Design System ──────────────────────────────────────────────────────────────
+const C = {
+  bg:      "#0F0E0C",
+  bg2:     "#161410",
+  bg3:     "#1D1A15",
+  amber:   "#378781",
+  cream:   "#F0E6D3",
+  orange:  "#E8652A",
+  sage:    "#7FB069",
+  sky:     "#5BAFD6",
+  rose:    "#D4657A",
+  dim:     "#7A6E61",
+  dimmer:  "#3D3830",
+  border:  "rgba(245,166,35,0.12)",
 };
 
-const NAV_ITEMS = [
-  { id: "home", label: "Home" },
-  { id: "about", label: "About" },
-  { id: "experience", label: "Experience" },
-  { id: "skills", label: "Skills" },
-  { id: "projects", label: "Projects" },
-  { id: "contact", label: "Contact" },
-];
-
-const SKILLS = [
-  {
-    category: "Networking & Systems",
-    accent: "#2EE8A5",
-    items: ["C++20 / C", "TCP/IP Stack (L2–L7)", "eBPF / XDP", "libpcap / Raw Sockets", "Wireshark / tcpdump", "Linux Kernel Internals", "epoll / POSIX APIs", "Subnetting / Routing", "IDS / Anomaly Detection", "CCNA (In Progress)"],
-  },
-  {
-    category: "Full Stack (MERN)",
-    accent: "#60A5FA",
-    items: ["React.js / Redux Toolkit", "Node.js / Express.js", "MongoDB / Mongoose", "MySQL / Joins / Indexes", "JWT / OAuth2 / RBAC", "WebSockets (Socket.io)", "REST API Design", "Tailwind CSS / HTML5"],
-  },
-  {
-    category: "DevOps & Tools",
-    accent: "#F472B6",
-    items: ["Docker / Docker Compose", "GitHub Actions (CI/CD)", "Nginx / PM2", "Linux Server Admin", "Jest / Supertest / GTest", "Git / Bash Automation", "Postman / Swagger", "GDB / CMake"],
-  },
-  {
-    category: "Languages",
-    accent: "#FBBF24",
-    items: ["C++20", "C", "Python", "JavaScript", "Bash", "SQL"],
-  },
-];
-
-const EXPERIENCE = [
-  {
-    company: "Internet Society",
-    role: "Networking Contributor — Intern",
-    duration: "2025 – Present",
-    type: "current",
-    stack: ["Wireshark", "tcpdump", "iptables", "Bash", "Linux"],
-    bullets: [
-      "Performed deep packet inspection and traffic analysis using Wireshark, tcpdump, and tshark to identify and resolve connectivity issues.",
-      "Configured routing, subnetting, and firewall rules (iptables) across Linux hosts with structured runbook documentation.",
-      "Monitored live network flows and analyzed TCP handshakes, retransmits, and RTT to diagnose latency and packet loss.",
-      "Wrote Bash automation scripts for health-checks, interface stats collection, and alert generation — reduced manual monitoring effort ~30%.",
-      "Collaborated with senior network engineers on reliability improvements and contributed to best-practice TCP/IP documentation.",
-    ],
-  },
-  {
-    company: "Internet Society",
-    role: "Software Engineering Intern",
-    duration: "2025 – Present",
-    type: "current",
-    stack: ["Node.js", "Linux", "systemd", "Bash", "CI/CD"],
-    bullets: [
-      "Supported backend infrastructure on Linux servers — monitored uptime, managed services via systemd, and automated routine tasks with Bash scripts.",
-      "Diagnosed network and application connectivity issues using Wireshark and tcpdump; documented findings for the engineering team.",
-      "Collaborated with engineers on CI/CD workflow improvements and contributed to internal tooling documentation.",
-    ],
-  },
+const NAV = [
+  { id:"home",     label:"Home"     },
+  { id:"about",    label:"About"    },
+  { id:"skills",   label:"Skills"   },
+  { id:"strength", label:"Strength" },
+  { id:"projects", label:"Projects" },
+  { id:"contact",  label:"Contact"  },
 ];
 
 const PROJECTS = [
   {
-    title: "Intelligent Intrusion Detection System",
-    type: "Systems / Networking",
-    accent: "#2EE8A5",
-    stack: ["C++20", "libpcap", "eBPF", "TC Hook", "Qt6", "Raw Sockets"],
-    bullets: [
-      "Real-time IDS from scratch with libpcap packet capture and full protocol dissection (Ethernet → IP → TCP/UDP → payload).",
-      "Dual-engine detection: rule-based + anomaly/heuristic engine for unknown threats.",
-      "eBPF programs at TC ingress hook reduced CPU load ~60% under heavy traffic.",
-      "Multi-threaded pipeline handled 50,000+ packets/second with zero drops.",
-      "Alert system emits structured JSON events with <2ms latency — SIEM/ELK-ready.",
-      "Qt6 dashboard with live traffic graph, alert feed, and rule management panel.",
+    id:"01", title:"Intelligent Intrusion Detection System", short:"IDS Engine",
+    type:"Systems · Security", accent:C.amber, year:"2025–Present",
+    github:"https://github.com/Anilkumar64",
+    stack:["C++20","libpcap","eBPF","TC Hook","Kernel Module","Qt6","Python ML"],
+    desc:"Real-time IDS — libpcap NIC capture, eBPF kernel filtering, dual detection engine, 50K+ pkt/sec lock-free pipeline.",
+    bullets:[
+      "Custom kernel module (ids_kmod.ko) intercepts packets pre-userspace — near-zero-copy NIC path.",
+      "Dual-engine: rule-based (port scans, SYN flood, ARP spoofing) + ML anomaly (Random Forest, CICIDS2017).",
+      "eBPF at TC ingress hook — ~60% CPU reduction under heavy traffic.",
+      "Lock-free ring buffer (C++20 atomics, acquire/release) — 50K+ pkt/sec, zero drops.",
+      "Structured JSON alerts <2ms latency — SIEM/ELK-ready.",
+      "Qt6 dashboard: live traffic graph, alert feed, suspicious IP table, protocol chart.",
     ],
   },
   {
-    title: "Kernel Traffic Analyzer",
-    type: "Systems / eBPF",
-    accent: "#60A5FA",
-    stack: ["C++20", "libpcap", "eBPF/XDP", "BPF Maps", "Ring Buffers", "Qt6"],
-    bullets: [
-      "Kernel-aware analyzer combining userspace libpcap with eBPF at TC and XDP hooks — near-zero-copy path.",
-      "BPF hash maps and ring buffers accumulate per-flow stats in kernel space.",
-      "Protocol dissector covers TCP, UDP, ICMP, DNS, and HTTP/1.x with correct endianness.",
-      "Qt6 dashboard with 1Hz auto-refresh: bandwidth graphs, top-talker table, RTT timeline.",
+    id:"02", title:"TCP/IP Stack Visualizer", short:"NetGuardX",
+    type:"Systems · Networking", accent:C.sky, year:"2024",
+    github:"https://github.com/Anilkumar64",
+    stack:["C++20","libpcap","Qt6","Raw Sockets","Linux"],
+    desc:"Live packet capture from NIC, layer-by-layer TCP/IP dissection and real-time animation — Ethernet frame to payload.",
+    bullets:[
+      "Direct NIC capture via libpcap — no pcap files, pure wire stream processing.",
+      "TCP/UDP stream separation, encapsulation visualised: Ethernet → IP → segment → payload.",
+      "Animated fragmentation/reassembly across all TCP/IP layers in real time.",
+      "Header field dissection: SYN/ACK/FIN/RST flags, seq/ack numbers, TTL, checksum.",
+      "Qt6 UI: live stream view, protocol filter panel, per-layer detail inspector.",
     ],
   },
   {
-    title: "E-Learning Platform",
-    type: "Full Stack (MERN)",
-    accent: "#F472B6",
-    stack: ["React.js", "Node.js", "Express.js", "MongoDB", "JWT", "Docker", "GitHub Actions"],
-    bullets: [
-      "Complete LMS with three user roles (Student, Instructor, Admin) with JWT session management and RBAC.",
-      "20+ RESTful API endpoints with Mongoose aggregation pipelines powering dashboards.",
-      "React frontend with Redux Toolkit — 90+ Lighthouse performance score.",
-      "Multi-stage Docker build reduced image size 40%; GitHub Actions CI/CD pipeline.",
+    id:"03", title:"Kernel Traffic Analyzer", short:"KTA Engine",
+    type:"Kernel · eBPF", accent:"#B48EF0",
+    year:"2024", github:"https://github.com/Anilkumar64",
+    stack:["C++20","eBPF/XDP","BPF Maps","Ring Buffers","libpcap","Qt6"],
+    desc:"Kernel-aware analyzer combining libpcap with eBPF at XDP hooks for per-flow stats — near-zero-copy path.",
+    bullets:[
+      "eBPF at TC and XDP hooks — near-zero-copy path from NIC to analysis engine.",
+      "BPF hash maps accumulate per-flow stats in kernel space; userspace reads via ring buffers.",
+      "Dissector: TCP, UDP, ICMP, DNS query/response, HTTP/1.x method + status + host.",
+      "Qt6 dashboard: 1Hz refresh, bandwidth graphs, top-talker table, RTT timeline.",
     ],
   },
   {
-    title: "E-Grievance Hub",
-    type: "Full Stack",
-    accent: "#FBBF24",
-    stack: ["React.js", "Node.js", "MySQL", "Socket.io", "Nginx", "Jest"],
-    bullets: [
-      "Full-stack grievance management system with real-time status updates via WebSockets.",
-      "Normalized MySQL schema with optimized JOINs — reduced dashboard query time 50%.",
-      "Three-tier role workflow (Citizen, Officer, Admin) with complete audit log.",
-      "Jest + Supertest tests with 80%+ coverage; Nginx reverse proxy with gzip caching.",
+    id:"04", title:"Tiny Shell — Remote Client/Server", short:"TinyShell",
+    type:"Systems · Linux", accent:C.amber, year:"2023",
+    github:"https://github.com/Anilkumar64",
+    stack:["C++20","POSIX Sockets","Qt6","Linux","pthreads"],
+    desc:"Unix shell from scratch — piping, redirection, background jobs, extended with remote client/server over raw TCP.",
+    bullets:[
+      "Full Unix shell: piping, I/O redirection, background jobs, POSIX signal handling.",
+      "Remote client/server over raw TCP socket with full stdin/stdout forwarding.",
+      "Custom wire protocol: command framing, partial reads, connection drops, graceful shutdown.",
+      "Qt6 terminal UI: command history, scrollback buffer, live connection status.",
+    ],
+  },
+  {
+    id:"05", title:"E-Learning Platform (LMS)", short:"EduStack",
+    type:"Full Stack · MERN", accent:C.sage, year:"2024–2025",
+    github:"https://github.com/Anilkumar64",
+    stack:["React.js","Node.js","Express.js","MongoDB","JWT","Docker","GitHub Actions"],
+    desc:"Complete LMS — 3 user roles, JWT auth, 20+ REST endpoints, Redux frontend, multi-stage Docker build.",
+    bullets:[
+      "Three roles (Student, Instructor, Admin) with JWT session management and RBAC.",
+      "20+ REST endpoints with Mongoose aggregation; 90+ Lighthouse score.",
+      "Multi-stage Docker build reduced image size 40%; GitHub Actions CI/CD.",
+      "Rate limiting, CORS, input sanitization across all routes.",
+    ],
+  },
+  {
+    id:"06", title:"E-Grievance Hub", short:"GrievanceOS",
+    type:"Full Stack · AI", accent:C.rose, year:"2024",
+    github:"https://github.com/Anilkumar64",
+    stack:["React.js","Node.js","MySQL","FastAPI","Socket.io","Docker","scikit-learn"],
+    desc:"University grievance system with AI auto-categorization + sentiment analysis, real-time WebSocket updates, 3-tier roles.",
+    bullets:[
+      "AI microservice (FastAPI + scikit-learn): auto-categorizes complaints + sentiment analysis.",
+      "Three-tier roles: Student, Admin, Super Admin — full audit log.",
+      "Real-time updates via WebSockets; optimized MySQL JOINs — 50% faster queries.",
+      "Jest + Supertest 80%+ coverage; Nginx reverse proxy with gzip caching.",
     ],
   },
 ];
 
-const STATS = [
-  { value: "4+", label: "Projects" },
-  { value: "50K+", label: "Pkt/sec IDS" },
-  { value: "8.0", label: "CGPA" },
-  { value: "2+", label: "Internships" },
-  { value: "90%", label: "Test Coverage" },
+const STRENGTHS = [
+  { label:"C++ / Systems Programming",      pct:92, color:C.amber },
+  { label:"Network Programming (TCP/IP)",   pct:90, color:C.sky   },
+  { label:"Linux Kernel & Internals",       pct:85, color:C.amber },
+  { label:"eBPF / XDP Programming",         pct:85, color:"#B48EF0"},
+  { label:"Packet Analysis & libpcap",      pct:88, color:C.sky   },
+  { label:"Multithreading & Concurrency",   pct:83, color:C.amber },
+  { label:"Full Stack (MERN)",              pct:72, color:C.sage   },
+  { label:"DevOps & Docker",               pct:68, color:C.rose   },
 ];
 
-// ── Cursor ─────────────────────────────────────────────────────────────────────
-function Cursor() {
-  const [vis, setVis] = useState(true);
-  useEffect(() => {
-    const t = setInterval(() => setVis(v => !v), 530);
-    return () => clearInterval(t);
-  }, []);
-  return <span style={{ opacity: vis ? 1 : 0, color: "#2EE8A5" }}>_</span>;
+const RADAR = [
+  { label:"C++\nSystems",  value:92 },
+  { label:"Network\nStack",value:90 },
+  { label:"libpcap\nCapture",value:88},
+  { label:"Linux\nKernel", value:85 },
+  { label:"eBPF/XDP",      value:85 },
+  { label:"Concurrency",   value:83 },
+  { label:"Full\nStack",   value:72 },
+  { label:"DevOps",        value:68 },
+];
+
+const TIMELINE = [
+  { y:"2022", t:"Started B.Tech CSE (AI & ML), ITM University Gwalior" },
+  { y:"2023", t:"Built Tiny Shell — first deep C++ + Linux project" },
+  { y:"2024 Q1", t:"TCP/IP Stack Visualizer with live libpcap NIC capture" },
+  { y:"2024 Q3", t:"Kernel Traffic Analyzer — eBPF/XDP kernel hooks" },
+  { y:"2025 Q1", t:"IDS project — kernel module + eBPF + ML pipeline" },
+  { y:"2025",    t:"Internet Society internship — live network diagnostics" },
+  { y:"2026",    t:"Graduated May 2026 — open to systems/network roles" },
+];
+
+const SKILL_CATS = [
+  { cat:"C++ Core", color:C.amber,
+    items:["C++20/17/14","Move Semantics","Perfect Forwarding","RAII","Smart Pointers","Template Metaprogramming","Custom Allocators","SFINAE/Concepts","constexpr","STL Internals"] },
+  { cat:"Linux / Kernel", color:C.sky,
+    items:["Kernel Internals","Process Scheduler","Memory Management","Network Stack","Kernel Modules (.ko)","netfilter/iptables","/proc & /sys","epoll/select/poll","POSIX APIs"] },
+  { cat:"eBPF / Networking", color:"#B48EF0",
+    items:["eBPF Programs","TC Hook","XDP","BPF Maps","Ring Buffers","libpcap","Raw Sockets","TCP/IP L2–L7","DNS/HTTP/ARP"] },
+  { cat:"Concurrency", color:C.orange,
+    items:["std::thread/pthreads","Lock-Free Queues","std::atomic","Memory Ordering","Condition Variables","Thread Sanitizer"] },
+  { cat:"Full Stack", color:C.sage,
+    items:["React.js/Redux","Node.js/Express","MongoDB/Mongoose","MySQL/Joins","JWT/OAuth2/RBAC","WebSockets","REST API"] },
+  { cat:"DevOps & Tools", color:C.rose,
+    items:["Docker/Compose","GitHub Actions","CMake/GDB","Valgrind/ASan","Wireshark/tcpdump","Nginx/PM2","Jest/GTest"] },
+];
+
+// ── Hooks ──────────────────────────────────────────────────────────────────────
+function useInView(threshold=0.1){
+  const ref=useRef(null);
+  const [vis,setVis]=useState(false);
+  useEffect(()=>{
+    const o=new IntersectionObserver(([e])=>{if(e.isIntersecting){setVis(true);o.disconnect();}},{threshold});
+    if(ref.current) o.observe(ref.current);
+    return()=>o.disconnect();
+  },[]);
+  return [ref,vis];
 }
 
-// ── Typewriter ─────────────────────────────────────────────────────────────────
-function Typewriter({ strings, speed = 65, pause = 2000 }) {
-  const [text, setText] = useState("");
-  const [idx, setIdx] = useState(0);
-  const [charIdx, setCharIdx] = useState(0);
-  const [deleting, setDeleting] = useState(false);
-  useEffect(() => {
-    const current = strings[idx];
-    const timeout = deleting
-      ? setTimeout(() => { setText(t => t.slice(0, -1)); if (text.length === 1) { setDeleting(false); setIdx(i => (i + 1) % strings.length); setCharIdx(0); } }, 30)
-      : charIdx < current.length
-        ? setTimeout(() => { setText(t => t + current[charIdx]); setCharIdx(c => c + 1); }, speed)
-        : setTimeout(() => setDeleting(true), pause);
-    return () => clearTimeout(timeout);
-  }, [text, charIdx, deleting, idx, strings, speed, pause]);
-  return <span>{text}<Cursor /></span>;
+function useWindowWidth(){
+  const [w,setW]=useState(typeof window!=="undefined"?window.innerWidth:1200);
+  useEffect(()=>{
+    const fn=()=>setW(window.innerWidth);
+    window.addEventListener("resize",fn);
+    return()=>window.removeEventListener("resize",fn);
+  },[]);
+  return w;
 }
 
-// ── Section ────────────────────────────────────────────────────────────────────
-function Section({ id, children, style = {} }) {
-  const ref = useRef(null);
-  const [vis, setVis] = useState(false);
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVis(true); obs.disconnect(); } }, { threshold: 0.07 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-  return (
-    <section id={id} ref={ref} style={{ opacity: vis ? 1 : 0, transform: vis ? "translateY(0)" : "translateY(28px)", transition: "opacity 0.7s ease, transform 0.7s ease", ...style }}>
-      {children}
-    </section>
-  );
+// ── Helpers ────────────────────────────────────────────────────────────────────
+function Cursor(){
+  const [v,setV]=useState(true);
+  useEffect(()=>{const t=setInterval(()=>setV(x=>!x),540);return()=>clearInterval(t);},[]);
+  return <span style={{opacity:v?1:0,color:C.amber}}>▌</span>;
 }
 
-// ── Tag ────────────────────────────────────────────────────────────────────────
-function Tag({ children, accent = "#2EE8A5" }) {
-  return (
+function Typewriter({strings,speed=65,pause=2400}){
+  const [text,setText]=useState("");
+  const [idx,setIdx]=useState(0);
+  const [ci,setCi]=useState(0);
+  const [del,setDel]=useState(false);
+  useEffect(()=>{
+    const cur=strings[idx];
+    const t=del
+      ?setTimeout(()=>{setText(s=>s.slice(0,-1));if(text.length===1){setDel(false);setIdx(i=>(i+1)%strings.length);setCi(0);}},22)
+      :ci<cur.length
+        ?setTimeout(()=>{setText(s=>s+cur[ci]);setCi(c=>c+1);},speed)
+        :setTimeout(()=>setDel(true),pause);
+    return()=>clearTimeout(t);
+  },[text,ci,del,idx]);
+  return <span>{text}<Cursor/></span>;
+}
+
+function Chip({children,color=C.amber}){
+  return(
     <span style={{
-      display: "inline-block", padding: "4px 12px", borderRadius: 20,
-      fontSize: 11, fontFamily: "'DM Mono', monospace", fontWeight: 500,
-      background: `${accent}18`, color: accent, border: `1px solid ${accent}30`,
-      letterSpacing: "0.03em",
+      display:"inline-block",padding:"3px 10px",borderRadius:4,
+      fontSize:11,fontFamily:"monospace",letterSpacing:"0.04em",
+      background:`${color}15`,color:color,border:`1px solid ${color}30`,
     }}>{children}</span>
   );
 }
 
-// ── Section Header ─────────────────────────────────────────────────────────────
-function SectionHeader({ eyebrow, title }) {
-  return (
-    <div>
-      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#2EE8A5", textTransform: "uppercase", letterSpacing: "0.22em", marginBottom: 14, display: "flex", alignItems: "center", gap: 10 }}>
-        <span style={{ display: "inline-block", width: 28, height: 2, background: "#2EE8A5", borderRadius: 1 }} />
-        {eyebrow}
+// ── Radar ──────────────────────────────────────────────────────────────────────
+function Radar({skills,size}){
+  const [vis,setVis]=useState(false);
+  const [ref,inView]=useInView(0.2);
+  useEffect(()=>{if(inView){const t=setTimeout(()=>setVis(true),200);return()=>clearTimeout(t);}},[inView]);
+  const cx=size/2,cy=size/2,r=size*0.36,n=skills.length;
+  const ang=i=>(i/n)*2*Math.PI-Math.PI/2;
+  const pt=(i,pct)=>{const a=ang(i),l=r*(pct/100);return[cx+l*Math.cos(a),cy+l*Math.sin(a)];};
+  return(
+    <div ref={ref} style={{display:"flex",justifyContent:"center",alignItems:"center"}}>
+      <svg width={size} height={size} style={{overflow:"visible"}}>
+        <defs>
+          <radialGradient id="rg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor={C.amber} stopOpacity="0.3"/>
+            <stop offset="100%" stopColor={C.amber} stopOpacity="0.02"/>
+          </radialGradient>
+          <filter id="gl"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        {[25,50,75,100].map(l=>(
+          <polygon key={l} points={skills.map((_,i)=>pt(i,l).join(",")).join(" ")}
+            fill="none" stroke={`rgba(245,166,35,0.08)`} strokeWidth="1"/>
+        ))}
+        {skills.map((_,i)=>{const[x,y]=pt(i,100);return<line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="rgba(245,166,35,0.1)" strokeWidth="1"/>;;})}
+        <polygon
+          points={skills.map((s,i)=>pt(i,vis?s.value:0).join(",")).join(" ")}
+          fill="url(#rg)" stroke={C.amber} strokeWidth="2" filter="url(#gl)"
+          style={{transition:"all 1.4s cubic-bezier(0.34,1.56,0.64,1)"}}
+        />
+        {skills.map((s,i)=>{const[x,y]=pt(i,vis?s.value:0);return(
+          <circle key={i} cx={x} cy={y} r="4" fill={C.amber}
+            style={{transition:`all 1.4s cubic-bezier(0.34,1.56,0.64,1) ${i*0.06}s`}}/>
+        );})}
+        {skills.map((s,i)=>{const[x,y]=pt(i,116);const lines=s.label.split("\n");return(
+          <text key={i} x={x} y={y} textAnchor="middle" dominantBaseline="middle"
+            style={{fontFamily:"monospace",fontSize:9,fill:C.dim,letterSpacing:"0.05em"}}>
+            {lines.map((l,j)=><tspan key={j} x={x} dy={j===0?(lines.length>1?"-0.55em":"0em"):"1.3em"}>{l}</tspan>)}
+          </text>
+        );})}
+      </svg>
+    </div>
+  );
+}
+
+// ── StrengthBar ────────────────────────────────────────────────────────────────
+function SBar({label,pct,color,delay=0}){
+  const [ref,vis]=useInView(0.1);
+  const [w,setW]=useState(0);
+  useEffect(()=>{if(vis){const t=setTimeout(()=>setW(pct),delay);return()=>clearTimeout(t);}},[vis]);
+  return(
+    <div ref={ref} style={{marginBottom:20}}>
+      <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}>
+        <span style={{fontFamily:"monospace",fontSize:12,color:C.cream,letterSpacing:"0.02em"}}>{label}</span>
+        <span style={{fontFamily:"monospace",fontSize:12,color:color,fontWeight:600}}>{pct}%</span>
       </div>
-      <h2 style={{ fontFamily: "'Sora', sans-serif", fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, color: "#FFFFFF", margin: "0 0 20px", letterSpacing: "-0.03em", lineHeight: 1.1 }}>
+      <div style={{height:3,background:C.dimmer,borderRadius:2,overflow:"hidden"}}>
+        <div style={{height:"100%",width:`${w}%`,background:`linear-gradient(90deg,${color}66,${color})`,
+          borderRadius:2,boxShadow:`0 0 10px ${color}44`,
+          transition:`width 1.3s cubic-bezier(0.16,1,0.3,1) ${delay}ms`}}/>
+      </div>
+    </div>
+  );
+}
+
+// ── Section wrapper ────────────────────────────────────────────────────────────
+function Sec({id,children,bg=C.bg,pt=100,pb=100}){
+  const [ref,vis]=useInView(0.05);
+  return(
+    <section id={id} ref={ref} style={{
+      background:bg,paddingTop:pt,paddingBottom:pb,
+      opacity:vis?1:0,transform:vis?"none":"translateY(28px)",
+      transition:"all 0.75s ease",
+    }}>{children}</section>
+  );
+}
+
+function Wrap({children}){
+  const w=useWindowWidth();
+  const px=w<640?20:w<1024?32:48;
+  return(
+    <div style={{maxWidth:1200,margin:"0 auto",padding:`0 ${px}px`}}>{children}</div>
+  );
+}
+
+// ── Section Heading ────────────────────────────────────────────────────────────
+function Heading({num,title}){
+  return(
+    <div style={{marginBottom:60}}>
+      <div style={{fontFamily:"monospace",fontSize:11,color:C.amber,letterSpacing:"0.3em",
+        textTransform:"uppercase",marginBottom:10,display:"flex",alignItems:"center",gap:12}}>
+        <span style={{fontFamily:"monospace",color:C.dimmer,fontSize:22,fontWeight:700,letterSpacing:"-0.02em"}}>{num}</span>
+        <span style={{flex:1,height:1,background:`linear-gradient(90deg,${C.amber}40,transparent)`}}/>
+      </div>
+      <h2 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:"clamp(2.2rem,5vw,3.5rem)",
+        fontWeight:700,color:C.cream,margin:0,letterSpacing:"-0.03em",lineHeight:1.1}}>
         {title}
       </h2>
-      <div style={{ width: 48, height: 3, background: "linear-gradient(90deg, #2EE8A5, transparent)", borderRadius: 2 }} />
     </div>
   );
 }
 
 // ── Navbar ─────────────────────────────────────────────────────────────────────
-function Navbar() {
-  const [active, setActive] = useState("home");
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 30);
-      const y = window.scrollY + 140;
-      for (let i = NAV_ITEMS.length - 1; i >= 0; i--) {
-        const el = document.getElementById(NAV_ITEMS[i].id);
-        if (el && el.offsetTop <= y) { setActive(NAV_ITEMS[i].id); break; }
+function Navbar(){
+  const [active,setActive]=useState("home");
+  const [scrolled,setScrolled]=useState(false);
+  const [open,setOpen]=useState(false);
+  const w=useWindowWidth();
+  const mobile=w<768;
+
+  useEffect(()=>{
+    const fn=()=>{
+      setScrolled(window.scrollY>40);
+      const y=window.scrollY+160;
+      for(let i=NAV.length-1;i>=0;i--){
+        const el=document.getElementById(NAV[i].id);
+        if(el&&el.offsetTop<=y){setActive(NAV[i].id);break;}
       }
     };
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-  const scrollTo = id => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    window.addEventListener("scroll",fn);
+    return()=>window.removeEventListener("scroll",fn);
+  },[]);
 
-  return (
-    <nav style={{
-      position: "fixed", top: 0, left: 0, right: 0, zIndex: 200,
-      background: "rgba(10,10,10,0.96)", backdropFilter: "blur(24px)",
-      borderBottom: `1px solid ${scrolled ? "rgba(46,232,165,0.12)" : "rgba(255,255,255,0.06)"}`,
-      transition: "border-color 0.3s",
-    }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
-        {/* Logo */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} onClick={() => scrollTo("home")}>
-          <div style={{ width: 36, height: 36, borderRadius: 10, overflow: "hidden", border: "2px solid #2EE8A5", flexShrink: 0 }}>
-            <img src={profileImg} alt="AK" style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              onError={e => { e.target.style.display = "none"; e.target.parentNode.style.background = "#2EE8A5"; e.target.parentNode.style.display = "flex"; e.target.parentNode.style.alignItems = "center"; e.target.parentNode.style.justifyContent = "center"; e.target.parentNode.innerHTML = '<span style="font-size:14px;font-weight:800;color:#0a0a0a;font-family:sans-serif">AK</span>'; }} />
-          </div>
-          <div>
-            <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 15, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.02em", lineHeight: 1 }}>Anil Kumar</div>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#2EE8A5", letterSpacing: "0.1em", lineHeight: 1.5 }}>DEVELOPER</div>
-          </div>
-        </div>
+  const go=id=>{document.getElementById(id)?.scrollIntoView({behavior:"smooth"});setOpen(false);};
 
-        {/* Nav */}
-        <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
-          {NAV_ITEMS.map(n => (
-            <button key={n.id} onClick={() => scrollTo(n.id)} style={{
-              background: active === n.id ? "rgba(46,232,165,0.12)" : "transparent",
-              border: "none", cursor: "pointer", padding: "8px 18px", borderRadius: 8,
-              fontFamily: "'Sora', sans-serif", fontSize: 15, fontWeight: active === n.id ? 600 : 500,
-              color: active === n.id ? "#2EE8A5" : "#AAAAAA",
-              transition: "all 0.2s", letterSpacing: "-0.01em",
+  return(
+    <>
+      <nav style={{
+        position:"fixed",top:0,left:0,right:0,zIndex:400,
+        background:scrolled?"rgba(15,14,12,0.97)":"transparent",
+        backdropFilter:scrolled?"blur(24px)":"none",
+        borderBottom:scrolled?`1px solid ${C.border}`:"1px solid transparent",
+        transition:"all 0.4s",
+      }}>
+        <div style={{maxWidth:1200,margin:"0 auto",padding:"0 20px",display:"flex",
+          alignItems:"center",justifyContent:"space-between",height:64}}>
+
+          <div onClick={()=>go("home")} style={{cursor:"pointer",display:"flex",alignItems:"center",gap:10}}>
+            <div style={{width:34,height:34,borderRadius:6,background:`${C.amber}20`,
+              border:`1px solid ${C.amber}50`,display:"flex",alignItems:"center",justifyContent:"center"}}>
+              <span style={{fontFamily:"monospace",fontSize:13,color:C.amber,fontWeight:700}}>AK</span>
+            </div>
+            {!mobile&&<span style={{fontFamily:"'Playfair Display',serif",fontWeight:700,fontSize:16,
+              color:C.cream,letterSpacing:"-0.01em"}}>Anil Kumar</span>}
+          </div>
+
+          {!mobile&&(
+            <div style={{display:"flex",gap:2}}>
+              {NAV.map(n=>(
+                <button key={n.id} onClick={()=>go(n.id)} style={{
+                  background:active===n.id?`${C.amber}18`:"transparent",
+                  border:"none",cursor:"pointer",padding:"7px 15px",borderRadius:6,
+                  fontFamily:"monospace",fontSize:13,letterSpacing:"0.03em",
+                  color:active===n.id?C.amber:C.dim,transition:"all 0.2s",
+                }}
+                  onMouseEnter={e=>{if(active!==n.id)e.currentTarget.style.color=C.cream;}}
+                  onMouseLeave={e=>{if(active!==n.id)e.currentTarget.style.color=C.dim;}}>
+                  {n.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <a href="mailto:vennapureddyanil456@gmail.com" style={{
+              padding:"8px 18px",borderRadius:6,background:C.amber,color:C.bg,
+              textDecoration:"none",fontFamily:"monospace",fontWeight:700,fontSize:12,
+              letterSpacing:"0.04em",transition:"all 0.2s",whiteSpace:"nowrap",
+              boxShadow:`0 4px 18px ${C.amber}40`,
             }}
-              onMouseEnter={e => { if (active !== n.id) { e.currentTarget.style.color = "#FFFFFF"; e.currentTarget.style.background = "rgba(255,255,255,0.05)"; } }}
-              onMouseLeave={e => { if (active !== n.id) { e.currentTarget.style.color = "#AAAAAA"; e.currentTarget.style.background = "transparent"; } }}>
-              {n.label}
-            </button>
-          ))}
+              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";}}>
+              Hire Me
+            </a>
+            {mobile&&(
+              <button onClick={()=>setOpen(o=>!o)} style={{
+                background:"transparent",border:`1px solid ${C.border}`,
+                borderRadius:6,padding:"7px 10px",cursor:"pointer",
+                color:C.cream,fontSize:18,lineHeight:1,
+              }}>{open?"✕":"☰"}</button>
+            )}
+          </div>
         </div>
 
-        {/* CTA */}
-        <a href="mailto:vennapureddyanil456@gmail.com" target="_blank" style={{
-          display: "flex", alignItems: "center", gap: 8, padding: "10px 22px", borderRadius: 30,
-          background: "#2EE8A5", color: "#0a0a0a", textDecoration: "none",
-          fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 13,
-          transition: "transform 0.2s, box-shadow 0.2s", boxShadow: "0 4px 20px rgba(46,232,165,0.35)",
-        }}
-          onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 28px rgba(46,232,165,0.5)"; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(46,232,165,0.35)"; }}>
-          ▶ Hire Me
-        </a>
-      </div>
-    </nav>
-  );
-}
-
-// ── Social Sidebar ─────────────────────────────────────────────────────────────
-function SocialSidebar() {
-  const links = [
-    { label: "GH", href: "https://github.com/Anilkumar64", title: "GitHub" },
-    { label: "LI", href: "https://www.linkedin.com/in/vennapu-reddy-anil-kumar-8782a521a/", title: "LinkedIn" },
-    { label: "ML", href: "mailto:vennapureddyanil456@gmail.com", title: "Email" },
-  ];
-  return (
-    <div style={{ position: "fixed", right: 20, top: "50%", transform: "translateY(-50%)", zIndex: 100, display: "flex", flexDirection: "column", gap: 10 }}>
-      {links.map(l => (
-        <a key={l.label} href={l.href} title={l.title} target={l.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" style={{
-          width: 40, height: 40, borderRadius: "50%", background: "#161616",
-          border: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center",
-          fontFamily: "'DM Mono', monospace", fontSize: 10, fontWeight: 700, color: "#666666",
-          textDecoration: "none", transition: "all 0.2s",
-        }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = "#2EE8A5"; e.currentTarget.style.color = "#2EE8A5"; e.currentTarget.style.background = "rgba(46,232,165,0.1)"; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "#666666"; e.currentTarget.style.background = "#161616"; }}>
-          {l.label}
-        </a>
-      ))}
-      <div style={{ width: 1, height: 60, background: "linear-gradient(to bottom, rgba(255,255,255,0.08), transparent)", margin: "4px auto 0" }} />
-    </div>
+        {/* Mobile menu */}
+        {mobile&&open&&(
+          <div style={{background:"rgba(15,14,12,0.98)",borderTop:`1px solid ${C.border}`,
+            padding:"16px 20px",display:"flex",flexDirection:"column",gap:4}}>
+            {NAV.map(n=>(
+              <button key={n.id} onClick={()=>go(n.id)} style={{
+                background:"transparent",border:"none",cursor:"pointer",
+                padding:"12px 16px",borderRadius:8,textAlign:"left",
+                fontFamily:"monospace",fontSize:14,
+                color:active===n.id?C.amber:C.dim,letterSpacing:"0.05em",
+                borderLeft:active===n.id?`3px solid ${C.amber}`:"3px solid transparent",
+              }}>{n.label}</button>
+            ))}
+          </div>
+        )}
+      </nav>
+    </>
   );
 }
 
 // ── Hero ───────────────────────────────────────────────────────────────────────
-function Hero() {
-  const scrollTo = id => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  return (
-    <section id="home" style={{ minHeight: "100vh", background: "#0a0a0a", position: "relative", overflow: "hidden", display: "flex", alignItems: "stretch" }}>
-      {/* Dot grid */}
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px)", backgroundSize: "32px 32px", opacity: 1, pointerEvents: "none" }} />
-      {/* Accent glow */}
-      <div style={{ position: "absolute", top: "10%", left: "25%", width: 700, height: 700, borderRadius: "50%", background: "radial-gradient(circle, rgba(46,232,165,0.07) 0%, transparent 65%)", pointerEvents: "none" }} />
+function Hero(){
+  const w=useWindowWidth();
+  const mobile=w<768;
+  const [m,setM]=useState(false);
+  useEffect(()=>{const t=setTimeout(()=>setM(true),80);return()=>clearTimeout(t);},[]);
 
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px", width: "100%", display: "flex", alignItems: "center", paddingTop: 72 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 400px", gap: 60, alignItems: "center", width: "100%", minHeight: "calc(100vh - 72px)" }}>
+  return(
+    <section id="home" style={{minHeight:"100vh",display:"flex",alignItems:"center",
+      position:"relative",overflow:"hidden",padding:`100px ${mobile?20:48}px 60px`}}>
 
-          {/* LEFT */}
-          <div style={{ paddingTop: 20 }}>
-            {/* Status badge */}
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(46,232,165,0.1)", border: "1px solid rgba(46,232,165,0.25)", borderRadius: 30, padding: "7px 18px", marginBottom: 32 }}>
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#2EE8A5", display: "inline-block", boxShadow: "0 0 10px #2EE8A5" }} />
-              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#2EE8A5", letterSpacing: "0.16em", textTransform: "uppercase" }}>Open to Work — 2026 Graduate</span>
-            </div>
+      {/* Textured bg */}
+      <div style={{position:"absolute",inset:0,zIndex:0,
+        backgroundImage:`radial-gradient(circle at 20% 50%, ${C.amber}08 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, ${C.sky}06 0%, transparent 45%)`,
+      }}/>
+      {/* Horizontal rule lines */}
+      {[0.2,0.4,0.6,0.8].map(p=>(
+        <div key={p} style={{position:"absolute",top:`${p*100}%`,left:0,right:0,height:1,
+          background:`linear-gradient(90deg, transparent, ${C.amber}08, transparent)`,zIndex:0}}/>
+      ))}
 
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 13, color: "#666666", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 10 }}>Hello, I'm</div>
+      <div style={{maxWidth:1200,margin:"0 auto",width:"100%",position:"relative",zIndex:1}}>
+        {/* Big number */}
+        <div style={{
+          fontFamily:"monospace",fontSize:"clamp(100px,18vw,200px)",
+          fontWeight:900,color:`${C.amber}06`,lineHeight:1,
+          position:"absolute",top:"-10%",right:mobile?"-5%":"0%",
+          userSelect:"none",letterSpacing:"-0.06em",zIndex:0,
+        }}>SWE</div>
 
-            <h1 style={{ fontFamily: "'Sora', sans-serif", fontSize: "clamp(3.5rem, 7.5vw, 7rem)", fontWeight: 800, color: "#FFFFFF", margin: "0", lineHeight: 0.92, letterSpacing: "-0.04em" }}>ANIL</h1>
-            <h1 style={{ fontFamily: "'Sora', sans-serif", fontSize: "clamp(3.5rem, 7.5vw, 7rem)", fontWeight: 800, color: "#2EE8A5", margin: "0 0 24px", lineHeight: 0.92, letterSpacing: "-0.04em" }}>KUMAR</h1>
-
-            <div style={{ height: 44, marginBottom: 24, fontFamily: "'DM Mono', monospace", fontSize: "clamp(1rem, 2vw, 1.2rem)", color: "#AAAAAA", letterSpacing: "0.02em" }}>
-              <Typewriter strings={["Network Engineer", "MERN Stack Developer", "Systems Programmer", "eBPF / Linux Kernel Dev", "CCNA Candidate"]} />
-            </div>
-
-            <p style={{ color: "#666666", fontSize: 16, lineHeight: 1.85, maxWidth: 520, margin: "0 0 40px", fontFamily: "'Sora', sans-serif" }}>
-              Final-year CS student at <span style={{ color: "#AAAAAA" }}>ITM University, Gwalior</span>. Building real-time network intrusion detection systems and full-stack web apps. Passionate about kernel-level programming and packet processing.
-            </p>
-
-            <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 56 }}>
-              <button onClick={() => scrollTo("projects")} style={{
-                padding: "14px 32px", borderRadius: 30, background: "#2EE8A5", color: "#0a0a0a",
-                border: "none", cursor: "pointer", fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 15,
-                transition: "all 0.2s", boxShadow: "0 6px 24px rgba(46,232,165,0.4)",
-              }}
-                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(46,232,165,0.55)"; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 6px 24px rgba(46,232,165,0.4)"; }}>
-                ▶ &nbsp;View Projects
-              </button>
-              <button onClick={() => scrollTo("contact")} style={{
-                padding: "14px 32px", borderRadius: 30, background: "transparent", color: "#FFFFFF",
-                border: "1.5px solid rgba(255,255,255,0.15)", cursor: "pointer",
-                fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: 15, transition: "all 0.2s",
-              }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "#2EE8A5"; e.currentTarget.style.color = "#2EE8A5"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"; e.currentTarget.style.color = "#FFFFFF"; }}>
-                Contact Me
-              </button>
-            </div>
-
-            {/* Stats */}
-            <div style={{ display: "flex", gap: 0, paddingTop: 32, borderTop: "1px solid rgba(255,255,255,0.07)", flexWrap: "wrap" }}>
-              {STATS.map((s, i) => (
-                <div key={s.label} style={{ paddingRight: 28, marginRight: 28, borderRight: i < STATS.length - 1 ? "1px solid rgba(255,255,255,0.07)" : "none", marginBottom: 8 }}>
-                  <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 24, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.03em", lineHeight: 1 }}>{s.value}</div>
-                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#555555", marginTop: 5, textTransform: "uppercase", letterSpacing: "0.08em" }}>{s.label}</div>
-                </div>
-              ))}
-            </div>
+        <div style={{position:"relative",zIndex:1,maxWidth:760}}>
+          {/* Status pill */}
+          <div style={{
+            display:"inline-flex",alignItems:"center",gap:8,
+            padding:"5px 14px",borderRadius:3,marginBottom:28,
+            background:`${C.amber}10`,border:`1px solid ${C.amber}30`,
+            opacity:m?1:0,transform:m?"none":"translateY(12px)",
+            transition:"all 0.6s ease 0.1s",
+          }}>
+            <span style={{width:6,height:6,borderRadius:"50%",background:C.sage,
+              boxShadow:`0 0 8px ${C.sage}`,display:"inline-block"}}/>
+            <span style={{fontFamily:"monospace",fontSize:11,color:C.amber,
+              letterSpacing:"0.2em",textTransform:"uppercase"}}>Available · May 2026</span>
           </div>
 
-          {/* RIGHT — Photo */}
-          <div style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }}>
-            <div style={{ position: "absolute", top: "5%", left: "5%", right: "5%", bottom: "5%", borderRadius: "60% 40% 55% 45% / 50% 60% 40% 50%", background: "rgba(46,232,165,0.12)", filter: "blur(40px)", zIndex: 0 }} />
-            <div style={{
-              position: "relative", zIndex: 1, width: 340, height: 440,
-              borderRadius: "100px 100px 70px 70px", overflow: "hidden",
-              border: "2px solid rgba(46,232,165,0.3)",
-              boxShadow: "0 32px 80px rgba(0,0,0,0.7)",
-            }}>
-              <img src={profileImg} alt="Anil Kumar" style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                onError={e => { e.target.style.display = "none"; e.target.parentNode.style.background = "#161616"; e.target.parentNode.style.display = "flex"; e.target.parentNode.style.alignItems = "center"; e.target.parentNode.style.justifyContent = "center"; e.target.parentNode.innerHTML = '<div style="text-align:center"><div style="font-size:80px">👨‍💻</div><div style="color:#2EE8A5;font-size:18px;font-weight:700;margin-top:12px;font-family:sans-serif">Anil Kumar</div></div>'; }} />
-              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "45%", background: "linear-gradient(to top, rgba(10,10,10,0.95), transparent)" }} />
-              <div style={{ position: "absolute", bottom: 20, left: 0, right: 0, textAlign: "center" }}>
-                <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 16, fontWeight: 700, color: "#FFFFFF" }}>Anil Kumar</div>
-                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#2EE8A5", letterSpacing: "0.12em", textTransform: "uppercase", marginTop: 3 }}>CS Engineer · ITM University</div>
+          <h1 style={{
+            fontFamily:"'Playfair Display',Georgia,serif",
+            fontSize:`clamp(3rem,${mobile?"10vw":"7vw"},6rem)`,
+            fontWeight:700,color:C.cream,margin:"0 0 8px",
+            letterSpacing:"-0.04em",lineHeight:0.95,
+            opacity:m?1:0,transform:m?"none":"translateY(20px)",
+            transition:"all 0.7s ease 0.2s",
+          }}>
+            Anil Kumar<br/>
+            <em style={{color:C.amber,fontStyle:"italic"}}>Vennapureddy</em>
+          </h1>
+
+          <div style={{
+            fontFamily:"monospace",fontSize:mobile?"14px":"clamp(14px,2vw,18px)",
+            color:C.dim,marginBottom:24,marginTop:16,letterSpacing:"0.02em",
+            opacity:m?1:0,transform:m?"none":"translateY(16px)",
+            transition:"all 0.7s ease 0.35s",
+          }}>
+            <span style={{color:C.dimmer}}>$ role → </span>
+            <Typewriter strings={["C++ Systems Engineer","Linux Kernel Developer","eBPF / Network Programmer","Packet Capture Engineer"]}/>
+          </div>
+
+          <p style={{
+            fontFamily:"Georgia,serif",fontSize:mobile?15:17,color:C.dim,
+            lineHeight:1.85,maxWidth:560,marginBottom:40,
+            opacity:m?1:0,transform:m?"none":"translateY(16px)",
+            transition:"all 0.7s ease 0.45s",
+          }}>
+            Four years building at the <span style={{color:C.cream,fontStyle:"italic"}}>kernel level</span> — not on top of it.
+            Real packet capture, eBPF programs, lock-free pipelines.
+            Linux is home.
+          </p>
+
+          <div style={{
+            display:"flex",gap:12,flexWrap:"wrap",marginBottom:60,
+            opacity:m?1:0,transform:m?"none":"translateY(16px)",
+            transition:"all 0.7s ease 0.55s",
+          }}>
+            <a href="#projects" onClick={e=>{e.preventDefault();document.getElementById("projects")?.scrollIntoView({behavior:"smooth"});}}
+              style={{padding:`12px ${mobile?20:28}px`,borderRadius:4,background:C.amber,color:C.bg,
+                textDecoration:"none",fontFamily:"monospace",fontWeight:700,fontSize:13,
+                letterSpacing:"0.06em",boxShadow:`0 6px 24px ${C.amber}40`,transition:"all 0.2s",
+              }}
+              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";}}>
+              VIEW PROJECTS →
+            </a>
+            <a href="https://github.com/Anilkumar64" target="_blank" rel="noopener noreferrer"
+              style={{padding:`12px ${mobile?20:28}px`,borderRadius:4,background:"transparent",
+                color:C.cream,border:`1px solid ${C.dimmer}`,textDecoration:"none",
+                fontFamily:"monospace",fontWeight:600,fontSize:13,letterSpacing:"0.06em",transition:"all 0.2s",
+              }}
+              onMouseEnter={e=>{e.currentTarget.style.borderColor=C.amber;e.currentTarget.style.color=C.amber;}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor=C.dimmer;e.currentTarget.style.color=C.cream;}}>
+              GITHUB ↗
+            </a>
+          </div>
+
+          {/* Stats */}
+          <div style={{
+            display:"grid",gridTemplateColumns:`repeat(${mobile?2:4},1fr)`,
+            gap:mobile?16:0,paddingTop:32,
+            borderTop:`1px solid ${C.border}`,
+            opacity:m?1:0,transition:"all 0.7s ease 0.7s",
+          }}>
+            {[["50K+","Pkt/sec IDS"],["8.0","CGPA"],["4+","Yrs Building"],["2Y+","GitHub"]].map(([v,l])=>(
+              <div key={l} style={{paddingRight:mobile?0:32,marginRight:mobile?0:32,
+                borderRight:mobile?"none":`1px solid ${C.border}`,"&:last-child":{borderRight:"none"}}}>
+                <div style={{fontFamily:"'Playfair Display',serif",fontSize:mobile?28:34,fontWeight:700,
+                  color:C.amber,letterSpacing:"-0.04em",lineHeight:1}}>{v}</div>
+                <div style={{fontFamily:"monospace",fontSize:10,color:C.dim,
+                  textTransform:"uppercase",letterSpacing:"0.12em",marginTop:4}}>{l}</div>
               </div>
-            </div>
-
-            {/* Floating chip top-left */}
-            <div style={{ position: "absolute", top: "14%", left: "-8%", zIndex: 2, background: "#161616", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, padding: "12px 16px", boxShadow: "0 12px 32px rgba(0,0,0,0.5)" }}>
-              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#2EE8A5", marginBottom: 3 }}>🌐 NETWORKING</div>
-              <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, color: "#FFFFFF", fontWeight: 600 }}>KTS/IDS 50K+Pkts</div>
-            </div>
-
-            {/* Floating chip bottom-right */}
-            <div style={{ position: "absolute", bottom: "16%", right: "-8%", zIndex: 2, background: "#161616", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, padding: "12px 16px", boxShadow: "0 12px 32px rgba(0,0,0,0.5)" }}>
-              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#60A5FA", marginBottom: 3 }}>⚡ FULLSTACK</div>
-              <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, color: "#FFFFFF", fontWeight: 600 }}>MERN + Devops</div>
-            </div>
+            ))}
           </div>
-
         </div>
       </div>
     </section>
@@ -408,295 +542,344 @@ function Hero() {
 }
 
 // ── About ──────────────────────────────────────────────────────────────────────
-function About() {
-  return (
-    <Section id="about" style={{ padding: "120px 0", background: "#111111" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "start" }}>
+function About(){
+  const w=useWindowWidth();
+  const mobile=w<900;
+  return(
+    <Sec id="about" bg={C.bg2}>
+      <Wrap>
+        <Heading num="01" title="Who I Am"/>
+        <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"1fr 1fr",gap:mobile?48:80,alignItems:"start"}}>
           <div>
-            <SectionHeader eyebrow="About Me" title="Looking for a role in Networking & Dev?" />
-            <p style={{ color: "#AAAAAA", lineHeight: 1.9, marginTop: 28, marginBottom: 20, fontSize: 15.5, fontFamily: "'Sora', sans-serif" }}>
-              Final-year CS student at <span style={{ color: "#FFFFFF", fontWeight: 600 }}>ITM University, Gwalior</span> (graduating May 2026), focused on <span style={{ color: "#2EE8A5" }}>systems/network programming</span> and <span style={{ color: "#60A5FA" }}>full-stack web development</span>.
+            <p style={{fontFamily:"Georgia,serif",fontSize:mobile?15:17,color:C.dim,lineHeight:1.9,marginBottom:20}}>
+              Systems programmer, graduated May 2026 from ITM University, Gwalior — B.Tech CSE (AI & ML), CGPA 8.0.
             </p>
-            <p style={{ color: "#666666", lineHeight: 1.9, marginBottom: 28, fontSize: 15.5, fontFamily: "'Sora', sans-serif" }}>
-              On the systems side, I write C++20 deep in the Linux networking stack — building real-time IDS engines with eBPF/XDP, libpcap, and lock-free data structures. On the web side, I architect MERN applications with JWT auth, WebSockets, and Docker CI/CD pipelines.
+            <p style={{fontFamily:"Georgia,serif",fontSize:mobile?15:17,color:C.dim,lineHeight:1.9,marginBottom:36}}>
+              Four years of hands-on systems work — not tutorials, not toy projects. Written eBPF kernel programs, built a live IDS handling 50K+ pkt/sec, gone deep into the Linux network stack. <span style={{color:C.cream,fontStyle:"italic"}}>The kernel is not a black box.</span>
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 24px", marginBottom: 36 }}>
-              {["Open to Internships", "Entry-Level Roles", "Network Engineering", "Full Stack Dev", "CCNA In Progress", "Linux / eBPF"].map(item => (
-                <div key={item} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ color: "#2EE8A5", fontSize: 14 }}>✓</span>
-                  <span style={{ color: "#AAAAAA", fontSize: 14, fontFamily: "'Sora', sans-serif" }}>{item}</span>
-                </div>
-              ))}
-            </div>
-            <a href="mailto:vennapureddyanil456@gmail.com" style={{
-              display: "inline-flex", alignItems: "center", gap: 8, padding: "13px 28px", borderRadius: 30,
-              background: "transparent", color: "#2EE8A5", border: "1.5px solid #2EE8A5",
-              textDecoration: "none", fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: 14, transition: "all 0.2s",
-            }}
-              onMouseEnter={e => { e.currentTarget.style.background = "#2EE8A5"; e.currentTarget.style.color = "#0a0a0a"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#2EE8A5"; }}>
-              ▶ Get In Touch
-            </a>
-          </div>
-          <div style={{ background: "#161616", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 20, padding: 40, position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "linear-gradient(90deg, #2EE8A5, #60A5FA)" }} />
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#2EE8A5", textTransform: "uppercase", letterSpacing: "0.18em", marginBottom: 24 }}>— Education</div>
-            <div style={{ display: "flex", alignItems: "center", gap: 18, marginBottom: 28 }}>
-              <div style={{ background: "rgba(46,232,165,0.1)", border: "1px solid rgba(46,232,165,0.25)", borderRadius: 14, padding: "14px 20px", textAlign: "center", flexShrink: 0 }}>
-                <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 28, fontWeight: 800, color: "#2EE8A5", letterSpacing: "-0.02em" }}>8.0</div>
-                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, color: "#555555", letterSpacing: "0.08em", textTransform: "uppercase", marginTop: 3 }}>CGPA</div>
-              </div>
-              <div>
-                <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 17, fontWeight: 700, color: "#FFFFFF", marginBottom: 5, letterSpacing: "-0.01em" }}>B.Tech — CSE</div>
-                <div style={{ color: "#AAAAAA", fontSize: 13.5, marginBottom: 3, fontFamily: "'Sora', sans-serif" }}>ITM University, Gwalior, MP</div>
-                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#555555" }}>Aug 2022 – May 2026</div>
-              </div>
-            </div>
-            <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 24 }}>
-              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#60A5FA", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: 14 }}>Currently Studying</div>
-              {["CCNA Certification (in progress)", "Linux Kernel Development", "Advanced eBPF / XDP", "DPDK — kernel-bypass networking", "Kubernetes CNI / eBPF Cilium"].map(item => (
-                <div key={item} style={{ display: "flex", gap: 10, marginBottom: 9 }}>
-                  <span style={{ color: "#2EE8A5", flexShrink: 0, marginTop: 1 }}>→</span>
-                  <span style={{ color: "#AAAAAA", fontSize: 13.5, fontFamily: "'Sora', sans-serif" }}>{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </Section>
-  );
-}
 
-// ── Experience ─────────────────────────────────────────────────────────────────
-function Experience() {
-  return (
-    <Section id="experience" style={{ padding: "120px 0", background: "#0a0a0a" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px" }}>
-        <SectionHeader eyebrow="Experience" title="Work History" />
-        <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 60 }}>
-          {EXPERIENCE.map((exp, i) => (
-            <div key={i} style={{
-              background: "#161616", border: "1px solid rgba(255,255,255,0.07)", borderLeft: "3px solid #2EE8A5",
-              borderRadius: 16, padding: "32px 36px", transition: "transform 0.2s, border-left-color 0.2s, box-shadow 0.2s",
-            }}
-              onMouseEnter={e => { e.currentTarget.style.transform = "translateX(6px)"; e.currentTarget.style.borderLeftColor = "#60A5FA"; e.currentTarget.style.boxShadow = "0 8px 40px rgba(0,0,0,0.4)"; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = "translateX(0)"; e.currentTarget.style.borderLeftColor = "#2EE8A5"; e.currentTarget.style.boxShadow = "none"; }}>
-              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 20 }}>
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                    <h3 style={{ fontFamily: "'Sora', sans-serif", fontSize: 18, fontWeight: 700, color: "#FFFFFF", margin: 0, letterSpacing: "-0.01em" }}>{exp.company}</h3>
-                    {exp.type === "current" && (
-                      <span style={{ padding: "3px 10px", borderRadius: 20, fontSize: 10, fontFamily: "'DM Mono', monospace", background: "rgba(46,232,165,0.12)", color: "#2EE8A5", border: "1px solid rgba(46,232,165,0.25)", letterSpacing: "0.06em" }}>● CURRENT</span>
-                    )}
-                  </div>
-                  <div style={{ color: "#2EE8A5", fontWeight: 600, fontSize: 14.5, marginBottom: 4, fontFamily: "'Sora', sans-serif" }}>{exp.role}</div>
-                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#555555" }}>{exp.duration}</div>
+            {/* Timeline */}
+            <div style={{borderLeft:`2px solid ${C.border}`,paddingLeft:24}}>
+              {TIMELINE.map((item,i)=>(
+                <div key={i} style={{marginBottom:18,position:"relative"}}>
+                  <div style={{position:"absolute",left:-29,top:5,width:8,height:8,borderRadius:"50%",
+                    background:i===TIMELINE.length-1?C.amber:C.dimmer,
+                    boxShadow:i===TIMELINE.length-1?`0 0 10px ${C.amber}`:"none"}}/>
+                  <div style={{fontFamily:"monospace",fontSize:10,color:C.amber,
+                    letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:2}}>{item.y}</div>
+                  <div style={{fontFamily:"Georgia,serif",fontSize:13.5,color:C.dim,lineHeight:1.6}}>{item.t}</div>
                 </div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                  {exp.stack.map(s => <Tag key={s} accent="#2EE8A5">{s}</Tag>)}
-                </div>
-              </div>
-              <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
-                {exp.bullets.map((b, j) => (
-                  <li key={j} style={{ display: "flex", gap: 10, marginBottom: 9 }}>
-                    <span style={{ color: "#2EE8A5", fontSize: 12, marginTop: 3, flexShrink: 0 }}>▸</span>
-                    <span style={{ color: "#AAAAAA", fontSize: 14.5, lineHeight: 1.75, fontFamily: "'Sora', sans-serif" }}>{b}</span>
-                  </li>
-                ))}
-              </ul>
+              ))}
             </div>
-          ))}
+          </div>
+
+          <div style={{display:"flex",flexDirection:"column",gap:16}}>
+            {/* Edu card */}
+            <div style={{background:C.bg3,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.amber}`,
+              borderRadius:8,padding:24}}>
+              <div style={{fontFamily:"monospace",fontSize:10,color:C.amber,letterSpacing:"0.2em",
+                textTransform:"uppercase",marginBottom:14}}>// Education</div>
+              <div style={{fontFamily:"'Playfair Display',serif",fontSize:18,fontWeight:700,
+                color:C.cream,marginBottom:4}}>B.Tech — CSE (AI & ML)</div>
+              <div style={{fontFamily:"Georgia,serif",fontSize:14,color:C.dim,marginBottom:2}}>ITM University, Gwalior</div>
+              <div style={{fontFamily:"monospace",fontSize:11,color:C.dimmer,marginBottom:16}}>Aug 2022 – May 2026</div>
+              <div style={{display:"inline-block",padding:"6px 16px",background:`${C.amber}18`,
+                border:`1px solid ${C.amber}40`,borderRadius:4,fontFamily:"monospace",
+                fontSize:18,fontWeight:700,color:C.amber}}>8.0 CGPA</div>
+            </div>
+
+            {/* Internship */}
+            <div style={{background:C.bg3,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.sky}`,
+              borderRadius:8,padding:24}}>
+              <div style={{fontFamily:"monospace",fontSize:10,color:C.sky,letterSpacing:"0.2em",
+                textTransform:"uppercase",marginBottom:14}}>// Internship</div>
+              <div style={{fontFamily:"'Playfair Display',serif",fontSize:16,fontWeight:700,color:C.cream,marginBottom:2}}>Internet Society (ISOC)</div>
+              <div style={{fontFamily:"monospace",fontSize:12,color:C.sky,marginBottom:12}}>Networking Contributor</div>
+              <p style={{fontFamily:"Georgia,serif",fontSize:13.5,color:C.dim,lineHeight:1.7,margin:0}}>
+                Deep packet inspection, TCP/IP diagnostics, iptables configuration, Bash automation — reduced manual monitoring ~30%.
+              </p>
+            </div>
+
+            {/* Currently studying */}
+            <div style={{background:C.bg3,border:`1px solid ${C.border}`,borderRadius:8,padding:24}}>
+              <div style={{fontFamily:"monospace",fontSize:10,color:"#B48EF0",letterSpacing:"0.2em",
+                textTransform:"uppercase",marginBottom:14}}>// Currently Studying</div>
+              {["CCNA (in progress)","Linux Kernel Dev — Corbet, Rubini","Advanced eBPF / XDP","DPDK — kernel-bypass","Cilium / Kubernetes eBPF"].map(item=>(
+                <div key={item} style={{display:"flex",gap:8,marginBottom:10}}>
+                  <span style={{color:C.amber,fontFamily:"monospace",flexShrink:0,fontSize:12}}>→</span>
+                  <span style={{fontFamily:"monospace",fontSize:12,color:C.dim,letterSpacing:"0.02em"}}>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
-    </Section>
+      </Wrap>
+    </Sec>
   );
 }
 
 // ── Skills ─────────────────────────────────────────────────────────────────────
-function Skills() {
-  return (
-    <Section id="skills" style={{ padding: "120px 0", background: "#111111" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px" }}>
-        <SectionHeader eyebrow="Skills" title="Technical Expertise" />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 22, marginTop: 60 }}>
-          {SKILLS.map(cat => (
-            <div key={cat.category} style={{
-              background: "#161616", border: "1px solid rgba(255,255,255,0.07)", borderTop: `3px solid ${cat.accent}`,
-              borderRadius: 16, padding: "28px 24px", transition: "transform 0.2s, box-shadow 0.2s",
-            }}
-              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = `0 20px 50px rgba(0,0,0,0.5)`; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
-              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: cat.accent, textTransform: "uppercase", letterSpacing: "0.16em", marginBottom: 18 }}>{cat.category}</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
-                {cat.items.map(item => (
-                  <span key={item} style={{ padding: "5px 11px", borderRadius: 20, fontSize: 12, fontFamily: "'DM Mono', monospace", background: `${cat.accent}0e`, color: "#AAAAAA", border: `1px solid ${cat.accent}20` }}>{item}</span>
-                ))}
+function Skills(){
+  const w=useWindowWidth();
+  const cols=w<640?1:w<1024?2:3;
+  return(
+    <Sec id="skills">
+      <Wrap>
+        <Heading num="02" title="Technical Arsenal"/>
+        <div style={{display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap:16}}>
+          {SKILL_CATS.map(cat=>(
+            <div key={cat.cat} style={{background:C.bg2,border:`1px solid ${C.border}`,
+              borderTop:`2px solid ${cat.color}`,borderRadius:8,padding:"22px 20px",
+              transition:"transform 0.25s,box-shadow 0.25s",}}
+              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-4px)";e.currentTarget.style.boxShadow=`0 16px 40px rgba(0,0,0,0.5),0 0 0 1px ${cat.color}18`;}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="none";}}>
+              <div style={{fontFamily:"monospace",fontSize:10,color:cat.color,
+                textTransform:"uppercase",letterSpacing:"0.18em",marginBottom:16}}>{cat.cat}</div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                {cat.items.map(it=><Chip key={it} color={cat.color}>{it}</Chip>)}
               </div>
             </div>
           ))}
         </div>
-      </div>
-    </Section>
+      </Wrap>
+    </Sec>
+  );
+}
+
+// ── Strength ───────────────────────────────────────────────────────────────────
+function Strength(){
+  const w=useWindowWidth();
+  const mobile=w<900;
+  const size=mobile?Math.min(w-80,320):340;
+  return(
+    <Sec id="strength" bg={C.bg2}>
+      <Wrap>
+        <Heading num="03" title="How Strong I Am"/>
+        <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"1fr 1fr",gap:mobile?48:80,alignItems:"start"}}>
+          <div>
+            <div style={{fontFamily:"monospace",fontSize:10,color:C.dimmer,
+              textTransform:"uppercase",letterSpacing:"0.2em",marginBottom:24}}>// Proficiency</div>
+            {STRENGTHS.map((s,i)=><SBar key={s.label} label={s.label} pct={s.pct} color={s.color} delay={i*100}/>)}
+            <div style={{marginTop:24,padding:"16px 18px",background:C.bg3,
+              borderRadius:8,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.amber}`}}>
+              <div style={{fontFamily:"Georgia,serif",fontSize:13.5,color:C.dim,lineHeight:1.75,fontStyle:"italic"}}>
+                "Systems programming, network stack, and eBPF are my deepest skills — genuinely rare at fresher level. MERN and DevOps are solid, not the primary identity."
+              </div>
+            </div>
+          </div>
+          <div>
+            <div style={{fontFamily:"monospace",fontSize:10,color:C.dimmer,
+              textTransform:"uppercase",letterSpacing:"0.2em",marginBottom:24,textAlign:"center"}}>// Skill Radar</div>
+            <Radar skills={RADAR} size={size}/>
+          </div>
+        </div>
+      </Wrap>
+    </Sec>
   );
 }
 
 // ── Projects ───────────────────────────────────────────────────────────────────
-function Projects() {
-  const [expanded, setExpanded] = useState(null);
-  return (
-    <Section id="projects" style={{ padding: "120px 0", background: "#0a0a0a" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px" }}>
-        <SectionHeader eyebrow="Projects" title="Featured Work" />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 24, marginTop: 60 }}>
-          {PROJECTS.map((p, i) => (
-            <div key={i} style={{
-              background: "#161616", border: "1px solid rgba(255,255,255,0.07)",
-              borderRadius: 18, overflow: "hidden", cursor: "pointer",
-              transition: "transform 0.25s, box-shadow 0.25s",
-            }}
-              onClick={() => setExpanded(expanded === i ? null : i)}
-              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.boxShadow = "0 24px 60px rgba(0,0,0,0.6)"; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
-              <div style={{ height: 3, background: `linear-gradient(90deg, ${p.accent}, ${p.accent}33)` }} />
-              <div style={{ padding: "24px 26px 0" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                  <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: p.accent, textTransform: "uppercase", letterSpacing: "0.12em" }}>{p.type}</span>
-                  <span style={{ color: "#444", transition: "transform 0.2s", transform: expanded === i ? "rotate(180deg)" : "rotate(0)", display: "inline-block", fontSize: 16 }}>▾</span>
+function Projects(){
+  const [exp,setExp]=useState(null);
+  const w=useWindowWidth();
+  const cols=w<640?1:w<1100?2:3;
+  return(
+    <Sec id="projects">
+      <Wrap>
+        <Heading num="04" title="What I've Built"/>
+        <div style={{display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap:20}}>
+          {PROJECTS.map((p,i)=>(
+            <div key={i} style={{background:C.bg2,border:`1px solid ${C.border}`,
+              borderRadius:8,overflow:"hidden",cursor:"pointer",
+              transition:"transform 0.25s,box-shadow 0.25s",}}
+              onClick={()=>setExp(exp===i?null:i)}
+              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-5px)";e.currentTarget.style.boxShadow=`0 24px 50px rgba(0,0,0,0.55),0 0 0 1px ${p.accent}20`;}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="none";}}>
+
+              {/* Top bar */}
+              <div style={{height:2,background:`linear-gradient(90deg,${p.accent},${p.accent}20)`}}/>
+
+              <div style={{padding:"20px 20px 0"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+                  <span style={{fontFamily:"monospace",fontSize:9,color:p.accent,
+                    textTransform:"uppercase",letterSpacing:"0.16em"}}>{p.type}</span>
+                  <span style={{fontFamily:"monospace",fontSize:9,color:C.dimmer}}>{p.year}</span>
                 </div>
-                <h3 style={{ fontFamily: "'Sora', sans-serif", fontSize: 16, fontWeight: 700, color: "#FFFFFF", margin: "0 0 16px", letterSpacing: "-0.01em", lineHeight: 1.35 }}>{p.title}</h3>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 20 }}>
-                  {p.stack.map(s => <Tag key={s} accent={p.accent}>{s}</Tag>)}
+
+                <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:8,marginBottom:6}}>
+                  <h3 style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:700,
+                    color:C.cream,margin:0,lineHeight:1.35,flex:1}}>{p.title}</h3>
+                  <span style={{fontFamily:"monospace",fontSize:9,color:C.dimmer,
+                    background:C.bg3,padding:"2px 7px",borderRadius:3,
+                    whiteSpace:"nowrap",flexShrink:0,marginTop:2}}>/{p.id}</span>
+                </div>
+
+                <p style={{fontFamily:"Georgia,serif",fontSize:13,color:C.dim,
+                  lineHeight:1.65,margin:"0 0 14px"}}>{p.desc}</p>
+
+                <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:16}}>
+                  {p.stack.map(s=><Chip key={s} color={p.accent}>{s}</Chip>)}
                 </div>
               </div>
-              <div style={{ padding: "0 26px 24px" }}>
-                <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
-                  {(expanded === i ? p.bullets : p.bullets.slice(0, 2)).map((b, j) => (
-                    <li key={j} style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-                      <span style={{ color: p.accent, fontSize: 10, marginTop: 4, flexShrink: 0 }}>▸</span>
-                      <span style={{ color: "#666666", fontSize: 13.5, lineHeight: 1.7, fontFamily: "'Sora', sans-serif" }}>{b}</span>
-                    </li>
-                  ))}
-                </ul>
-                {p.bullets.length > 2 && (
-                  <div style={{ color: p.accent, fontSize: 11, fontFamily: "'DM Mono', monospace", marginTop: 8 }}>
-                    {expanded === i ? "↑ show less" : `↓ +${p.bullets.length - 2} more`}
-                  </div>
-                )}
+
+              {/* Expandable */}
+              <div style={{maxHeight:exp===i?600:0,overflow:"hidden",transition:"max-height 0.4s ease"}}>
+                <div style={{padding:"0 20px 16px",borderTop:`1px solid ${C.border}`,paddingTop:14}}>
+                  <ul style={{margin:0,padding:0,listStyle:"none"}}>
+                    {p.bullets.map((b,j)=>(
+                      <li key={j} style={{display:"flex",gap:8,marginBottom:8}}>
+                        <span style={{color:p.accent,fontSize:9,marginTop:5,flexShrink:0}}>▸</span>
+                        <span style={{fontFamily:"Georgia,serif",fontSize:12.5,color:C.dim,lineHeight:1.65}}>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div style={{padding:"12px 20px",borderTop:`1px solid ${C.border}`,
+                display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <a href={p.github} target="_blank" rel="noopener noreferrer"
+                  onClick={e=>e.stopPropagation()}
+                  style={{fontFamily:"monospace",fontSize:11,color:C.dim,
+                    textDecoration:"none",display:"flex",alignItems:"center",gap:5,transition:"color 0.2s"}}
+                  onMouseEnter={e=>e.currentTarget.style.color=p.accent}
+                  onMouseLeave={e=>e.currentTarget.style.color=C.dim}>
+                  ⎇ GitHub →
+                </a>
+                <span style={{fontFamily:"monospace",fontSize:10,
+                  color:exp===i?p.accent:C.dimmer,transition:"color 0.2s"}}>
+                  {exp===i?"↑ less":"↓ details"}
+                </span>
               </div>
             </div>
           ))}
         </div>
-      </div>
-    </Section>
+      </Wrap>
+    </Sec>
   );
 }
 
 // ── Contact ────────────────────────────────────────────────────────────────────
-function Contact() {
-  const contacts = [
-    { label: "Email", value: "vennapureddyanil456@gmail.com", href: "mailto:vennapureddyanil456@gmail.com", accent: "#2EE8A5" },
-    { label: "Phone", value: "+91 77250 05752", href: "tel:+917725005752", accent: "#60A5FA" },
-    { label: "LinkedIn", value: "AnilKumar64", href: "https://www.linkedin.com/in/vennapu-reddy-anil-kumar-8782a521a/", accent: "#A78BFA" },
-    { label: "GitHub", value: "Anilkumar64", href: "https://github.com/Anilkumar64", accent: "#FBBF24" },
-    { label: "Location", value: "Gwalior, MP, India", href: null, accent: "#2EE8A5" },
+function Contact(){
+  const w=useWindowWidth();
+  const mobile=w<900;
+  const links=[
+    {label:"Email",   val:"vennapureddyanil456@gmail.com", href:"mailto:vennapureddyanil456@gmail.com", color:C.amber},
+    {label:"Phone",   val:"+91 77250 05752",               href:"tel:+917725005752",                   color:C.sky},
+    {label:"LinkedIn",val:"AnilKumar64 ↗",                 href:"https://www.linkedin.com/in/vennapu-reddy-anil-kumar-8782a521a/",color:"#B48EF0"},
+    {label:"GitHub",  val:"Anilkumar64 ↗",                 href:"https://github.com/Anilkumar64",      color:C.amber},
+    {label:"Location",val:"Gwalior, MP — Open to relocate",href:null,                                  color:C.sage},
+    {label:"Status",  val:"Available immediately",          href:null,                                  color:C.sage},
   ];
-  return (
-    <Section id="contact" style={{ padding: "120px 0", background: "#111111" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px" }}>
-        <SectionHeader eyebrow="Contact" title="Get In Touch" />
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, marginTop: 60, alignItems: "start" }}>
+  return(
+    <Sec id="contact" bg={C.bg2}>
+      <Wrap>
+        <Heading num="05" title="Let's Talk"/>
+        <div style={{display:"grid",gridTemplateColumns:mobile?"1fr":"1fr 1fr",gap:mobile?48:80,alignItems:"start"}}>
           <div>
-            <p style={{ color: "#AAAAAA", fontSize: 16, lineHeight: 1.85, marginBottom: 36, fontFamily: "'Sora', sans-serif", maxWidth: 440 }}>
-              Looking for internship or entry-level roles in <span style={{ color: "#FFFFFF" }}>Network Engineering</span> or <span style={{ color: "#FFFFFF" }}>Full Stack Development</span>. Let's build something great together.
+            <p style={{fontFamily:"Georgia,serif",fontSize:mobile?15:17,color:C.dim,
+              lineHeight:1.85,marginBottom:36,maxWidth:460}}>
+              Looking for <span style={{color:C.cream,fontStyle:"italic"}}>Systems / C++ / Network Engineering</span> roles at startups where depth actually matters. Ready to join immediately.
             </p>
-            <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+            <div style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:36}}>
               <a href="mailto:vennapureddyanil456@gmail.com" style={{
-                padding: "14px 30px", borderRadius: 30, background: "#2EE8A5", color: "#0a0a0a",
-                textDecoration: "none", fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 14,
-                boxShadow: "0 6px 24px rgba(46,232,165,0.4)", transition: "all 0.2s",
+                padding:"12px 28px",borderRadius:4,background:C.amber,color:C.bg,
+                textDecoration:"none",fontFamily:"monospace",fontWeight:700,
+                fontSize:12,letterSpacing:"0.06em",
+                boxShadow:`0 6px 24px ${C.amber}40`,transition:"all 0.2s",
               }}
-                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(46,232,165,0.55)"; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 6px 24px rgba(46,232,165,0.4)"; }}>
-                ▶ &nbsp;Send Email
+                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";}}
+                onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";}}>
+                SEND EMAIL →
               </a>
-              <a href="https://github.com/Anilkumar64" target="_blank" rel="noopener noreferrer" style={{
-                padding: "14px 30px", borderRadius: 30, background: "transparent", color: "#FFFFFF",
-                border: "1.5px solid rgba(255,255,255,0.15)", textDecoration: "none",
-                fontFamily: "'Sora', sans-serif", fontWeight: 600, fontSize: 14, transition: "all 0.2s",
-              }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "#FBBF24"; e.currentTarget.style.color = "#FBBF24"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"; e.currentTarget.style.color = "#FFFFFF"; }}>
-                GitHub
+              <a href="https://github.com/Anilkumar64" target="_blank" rel="noopener noreferrer"
+                style={{padding:"12px 28px",borderRadius:4,background:"transparent",
+                  color:C.cream,border:`1px solid ${C.dimmer}`,textDecoration:"none",
+                  fontFamily:"monospace",fontWeight:600,fontSize:12,
+                  letterSpacing:"0.06em",transition:"all 0.2s",}}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor=C.amber;e.currentTarget.style.color=C.amber;}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor=C.dimmer;e.currentTarget.style.color=C.cream;}}>
+                GITHUB ↗
               </a>
             </div>
-            <div style={{ marginTop: 40, background: "#161616", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "20px 24px", display: "flex", alignItems: "center", gap: 14, maxWidth: 360 }}>
-              <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#2EE8A5", flexShrink: 0, boxShadow: "0 0 12px #2EE8A5" }} />
+            <div style={{display:"flex",alignItems:"center",gap:12,padding:"14px 18px",
+              background:C.bg3,borderRadius:6,border:`1px solid ${C.border}`,
+              borderLeft:`3px solid ${C.sage}`,maxWidth:320}}>
+              <span style={{width:8,height:8,borderRadius:"50%",background:C.sage,
+                flexShrink:0,boxShadow:`0 0 10px ${C.sage}`}}/>
               <div>
-                <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 600, color: "#FFFFFF", fontSize: 14 }}>Available for work</div>
-                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#555555", marginTop: 2 }}>Graduating May 2026 · Gwalior, India</div>
+                <div style={{fontFamily:"monospace",fontSize:13,color:C.cream,letterSpacing:"0.02em"}}>Open to opportunities</div>
+                <div style={{fontFamily:"monospace",fontSize:10,color:C.dim,marginTop:3,letterSpacing:"0.05em"}}>Graduated May 2026 · India</div>
               </div>
             </div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-            {contacts.map(c => (
-              <div key={c.label} style={{ background: "#161616", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: "20px 18px", transition: "border-color 0.2s" }}
-                onMouseEnter={e => e.currentTarget.style.borderColor = `${c.accent}40`}
-                onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"}>
-                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: c.accent, textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: 8 }}>{c.label}</div>
-                {c.href ? (
-                  <a href={c.href} target={c.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer"
-                    style={{ color: "#AAAAAA", fontSize: 13, textDecoration: "none", wordBreak: "break-all", fontFamily: "'Sora', sans-serif", transition: "color 0.2s" }}
-                    onMouseEnter={e => e.target.style.color = c.accent}
-                    onMouseLeave={e => e.target.style.color = "#AAAAAA"}>{c.value}</a>
-                ) : (
-                  <span style={{ color: "#AAAAAA", fontSize: 13, fontFamily: "'Sora', sans-serif" }}>{c.value}</span>
+
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+            {links.map(l=>(
+              <div key={l.label} style={{background:C.bg3,border:`1px solid ${C.border}`,
+                borderRadius:8,padding:"16px 16px",transition:"border-color 0.2s,transform 0.2s"}}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor=`${l.color}40`;e.currentTarget.style.transform="translateY(-3px)";}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor=C.border;e.currentTarget.style.transform="none";}}>
+                <div style={{fontFamily:"monospace",fontSize:9,color:l.color,
+                  textTransform:"uppercase",letterSpacing:"0.18em",marginBottom:7}}>{l.label}</div>
+                {l.href?(
+                  <a href={l.href} target={l.href.startsWith("http")?"_blank":undefined}
+                    rel="noopener noreferrer"
+                    style={{fontFamily:"monospace",fontSize:11,color:C.dim,
+                      textDecoration:"none",wordBreak:"break-all",transition:"color 0.2s"}}
+                    onMouseEnter={e=>e.target.style.color=l.color}
+                    onMouseLeave={e=>e.target.style.color=C.dim}>{l.val}</a>
+                ):(
+                  <span style={{fontFamily:"monospace",fontSize:11,color:C.dim}}>{l.val}</span>
                 )}
               </div>
             ))}
           </div>
         </div>
-      </div>
-    </Section>
+      </Wrap>
+    </Sec>
   );
 }
 
 // ── Footer ─────────────────────────────────────────────────────────────────────
-function Footer() {
-  return (
-    <footer style={{ background: "#0a0a0a", borderTop: "1px solid rgba(255,255,255,0.07)", padding: "32px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 12, color: "#444444" }}>
-        <span style={{ color: "#2EE8A5" }}>Anil Kumar Vennapureddy</span> · © 2026 · Built with React
+function Footer(){
+  return(
+    <footer style={{background:C.bg,borderTop:`1px solid ${C.border}`,
+      padding:"24px 20px",display:"flex",justifyContent:"space-between",
+      alignItems:"center",flexWrap:"wrap",gap:10}}>
+      <div style={{fontFamily:"monospace",fontSize:11,color:C.dimmer}}>
+        <span style={{color:C.amber,fontFamily:"'Playfair Display',serif",fontStyle:"italic"}}>Anil Kumar Vennapureddy</span>
+        <span> · © 2026</span>
       </div>
-      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#444444" }}>Open to opportunities · Gwalior, India</div>
+      <div style={{fontFamily:"monospace",fontSize:10,color:C.dimmer,letterSpacing:"0.08em"}}>
+        C++ · Linux · eBPF · Open to work
+      </div>
     </footer>
   );
 }
 
 // ── App ────────────────────────────────────────────────────────────────────────
-export default function App() {
-  useEffect(() => {
-    const link = document.createElement("link");
-    link.href = "https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;0,600&display=swap";
-    link.rel = "stylesheet";
-    document.head.appendChild(link);
-    document.body.style.margin = "0";
-    document.body.style.background = "#0a0a0a";
-    document.body.style.overflowX = "hidden";
-  }, []);
-
-  return (
-    <div style={{ fontFamily: "'Sora', sans-serif", background: "#0a0a0a", color: "#FFFFFF" }}>
-      <Navbar />
-      <SocialSidebar />
-      <Hero />
-      <About />
-      <Experience />
-      <Skills />
-      <Projects />
-      <Contact />
-      <Footer />
+export default function App(){
+  useEffect(()=>{
+    const l=document.createElement("link");
+    l.href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap";
+    l.rel="stylesheet";
+    document.head.appendChild(l);
+    document.body.style.margin="0";
+    document.body.style.background=C.bg;
+    document.body.style.overflowX="hidden";
+  },[]);
+  return(
+    <div style={{fontFamily:"Georgia,serif",background:C.bg,color:C.cream}}>
+      <Navbar/>
+      <Hero/>
+      <About/>
+      <Skills/>
+      <Strength/>
+      <Projects/>
+      <Contact/>
+      <Footer/>
     </div>
   );
 }
