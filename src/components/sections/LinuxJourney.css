@@ -1,0 +1,70 @@
+.linux-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.linux-timeline-item {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 20px;
+}
+
+.linux-timeline-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 4px;
+}
+
+.linux-timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 3px var(--green-dim);
+  flex-shrink: 0;
+}
+
+.linux-timeline-line {
+  width: 2px;
+  flex: 1;
+  min-height: 40px;
+  background: var(--border);
+  margin-top: 4px;
+}
+
+.linux-timeline-content {
+  padding-bottom: 28px;
+}
+
+.linux-timeline-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.linux-timeline-year {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.linux-timeline-distro {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.linux-timeline-detail {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.linux-timeline-item:last-child .linux-timeline-content {
+  padding-bottom: 0;
+}

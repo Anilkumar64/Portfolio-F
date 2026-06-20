@@ -1,0 +1,83 @@
+.cpp-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+}
+
+.cpp-highlights {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.cpp-card {
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  border-left: 3px solid var(--green);
+}
+
+.cpp-card h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.cpp-card p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.cpp-bars-panel {
+  padding: 20px;
+  background: var(--terminal-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.cpp-bars-title {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--green);
+  margin-bottom: 16px;
+}
+
+.cpp-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.lang-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 40px;
+  gap: 8px;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.lang-name { color: var(--text-secondary); }
+.lang-bar { color: var(--green); letter-spacing: -1px; overflow: hidden; }
+.lang-row:first-child .lang-bar { color: var(--accent); font-weight: 600; }
+.lang-pct { color: var(--text-muted); font-size: 11px; text-align: right; }
+
+.cpp-snippet {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 900px) {
+  .cpp-grid,
+  .cpp-highlights {
+    grid-template-columns: 1fr;
+  }
+}

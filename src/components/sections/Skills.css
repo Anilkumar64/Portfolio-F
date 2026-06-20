@@ -1,0 +1,36 @@
+.skills-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.skills-group {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 18px;
+  align-items: start;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.skills-group:first-child {
+  border-top: 1px solid var(--border);
+}
+
+.skills-group h3 {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.skills-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 640px) {
+  .skills-group {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}

@@ -1,0 +1,54 @@
+.strength-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.strength-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.strength-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.strength-tier {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 100px;
+  flex-shrink: 0;
+}
+
+.tier-expert {
+  color: #047857;
+  background: #ecfdf5;
+}
+
+.tier-proficient {
+  color: #1d4ed8;
+  background: #eff6ff;
+}
+
+.tier-familiar {
+  color: #6b7280;
+  background: var(--bg-alt);
+}
+
+@media (max-width: 768px) {
+  .strength-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

@@ -1,0 +1,25 @@
+.philosophy-quote {
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+  font-weight: 500;
+  color: var(--green);
+  border-left: 3px solid var(--green);
+  padding-left: 20px;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.philosophy-body p {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  margin-bottom: 16px;
+  max-width: 640px;
+}
+
+.philosophy-ascii {
+  margin-top: 32px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  opacity: 0.5;
+}

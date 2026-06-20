@@ -1,0 +1,119 @@
+.github-panel {
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+}
+
+.github-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.github-stat {
+  padding: 15px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.github-stat-val {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.github-stat-label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.pinned-repos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.pinned-repo-card {
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.pinned-repo-name {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.pinned-repo-name:hover {
+  color: var(--accent);
+}
+
+.pinned-repo-desc {
+  margin-bottom: 14px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.pinned-repo-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.pinned-repo-lang {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 4px 9px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #1e40af;
+  background: var(--accent-dim);
+  border: 1px solid #bfdbfe;
+  border-radius: 4px;
+}
+
+.pinned-repo-stars {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.pinned-repo-link {
+  font-weight: 800;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.pinned-repo-link:hover {
+  color: var(--accent-dark);
+  text-decoration: underline;
+}
+
+.github-cta {
+  width: fit-content;
+}
+
+@media (max-width: 900px) {
+  .pinned-repos {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .github-stats-row {
+    grid-template-columns: 1fr;
+  }
+}

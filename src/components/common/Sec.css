@@ -1,0 +1,13 @@
+.sec {
+  padding: 80px 0;
+}
+
+.sec:nth-of-type(even) {
+  background: var(--bg-alt);
+}
+
+@media (max-width: 768px) {
+  .sec {
+    padding: 56px 0;
+  }
+}
